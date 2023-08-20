@@ -13,15 +13,21 @@
     class Particle{
         constructor(effect,x,y,color){
             this.effect = effect
-            this.x = Math.random() * this.effect.width
+            this.x = Math.random() * this.effect.width *5
             this.y = Math.random() * this.effect.height
             this.originX = Math.floor(x)
             this.originY =Math.floor(y)
-            this.size = 4
+            this.size = 2
             this.vx = 0
             this.vy =  0
             this.color = color
-            this.ease = 0.02
+            this.ease = 0.04;
+            this.dx = 0
+            this.dy = 0
+            this.distance =0
+            this.force = 0
+            this.angle = 0
+            this.friction = 0.45
         }
 
         draw(context){
@@ -29,8 +35,24 @@
             context.fillRect(this.x,this.y,this.size,this.size)
         }
         update(){
-            this.x += (this.originX - this.x) * this.ease
-            this.y += (this.originY - this.y)* this.ease
+            this.dx = this.effect.mouse.x - this.x
+            this.dy = this.effect.mouse.y - this.y
+            this.distance = this.dx * this.dx + this.dy *this.dy
+            this.force = -this.effect.mouse.radius / this.distance
+
+            if(this.distance <this.effect.mouse.radius ){
+                this.angle = Math.atan2(this.dy,this.dx)
+                this.vx += this.force * Math.cos(this.angle)
+                this.vy += this.force * Math.sin(this.angle)
+            }
+
+            this.x += (this.vx *=this.friction)  +(this.originX - this.x) * this.ease
+            this.y +=  (this.vy*=this.friction ) +(this.originY - this.y)* this.ease
+        }
+        warp(){
+            this.x = Math.random() * this.effect.width 
+            this.y = Math.random() * this.effect.height
+            this.ease = 0.07
         }
 
     }
@@ -48,7 +70,17 @@
             this.centerY = this.height * 0.5;
             this.x = this.centerX - this.image.width * 0.5
             this.y = this.centerY - this.image.height * 0.5;
-            this.gap = 4
+            this.gap = 3;
+            this.mouse = {
+                radius:3000,
+                x:undefined,
+                y:undefined
+            }
+            window.addEventListener('mousemove',(e)=>{
+                this.mouse.x = e.x;
+                this.mouse.y = e.y
+
+            })
 
         }
         init(ctx){
@@ -79,6 +111,9 @@
          
             this.particles.forEach(particle=>particle.update());
         }
+        warp(){
+            this.particles.forEach(particle=>particle.warp());
+        }
 
     }
     const effect = new Effect(canvas.width,canvas.height);
@@ -96,6 +131,11 @@
         requestAnimationFrame(animate)
     }
     animate()
+
+    btn.addEventListener('click',function(){
+        effect.warp()
+
+    })
 
     
 
