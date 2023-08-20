@@ -5,8 +5,13 @@
 }
 #canavs1{
     position: absolute;
+   
 }
+
 .controls{
     position: absolute;
     z-index: 100;
+}
+#image{
+    display: none;
 }
