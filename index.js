@@ -13,14 +13,15 @@
     class Particle{
         constructor(effect,x,y,color){
             this.effect = effect
-            this.x =x;
-            this.y = y;
+            this.x = Math.random() * this.effect.width
+            this.y = Math.random() * this.effect.height
             this.originX = Math.floor(x)
             this.originY =Math.floor(y)
             this.size = 4
-            this.vx = Math.random() * 5 -2.5
-            this.vy =  Math.random() * 5 -2.5
+            this.vx = 0
+            this.vy =  0
             this.color = color
+            this.ease = 0.02
         }
 
         draw(context){
@@ -28,8 +29,8 @@
             context.fillRect(this.x,this.y,this.size,this.size)
         }
         update(){
-            this.x += this.vx;
-            this.y += this.vy
+            this.x += (this.originX - this.x) * this.ease
+            this.y += (this.originY - this.y)* this.ease
         }
 
     }
